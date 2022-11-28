@@ -1,0 +1,31 @@
+From 7b0f9bffa9bcdf00e8602633a3777428d3f511cd Mon Sep 17 00:00:00 2001
+From: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+Date: Tue, 8 Nov 2022 19:48:07 -0500
+Subject: [PATCH 3/3] dtsi
+
+Signed-off-by: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+---
+ dts/x86/elkhart_lake.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/dts/x86/elkhart_lake.dtsi b/dts/x86/elkhart_lake.dtsi
+index ace3acbbea..4443bdd6c1 100644
+--- a/dts/x86/elkhart_lake.dtsi
++++ b/dts/x86/elkhart_lake.dtsi
+@@ -367,6 +367,13 @@
+ 
+ 			status = "okay";
+ 		};
++		
++		i225lm: i225lm@7fe00000 {
++                       compatible = "intel,eth-i225";
++                       reg = <PCIE_BDF(1,0,0) PCIE_ID(0x8086,0x15f2)>;
++                       label = "I225-LM";
++                       status = "okay";
++		};
+ 	};
+ 
+ 	soc {
+-- 
+2.25.1
+

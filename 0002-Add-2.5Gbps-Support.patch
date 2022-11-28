@@ -1,0 +1,149 @@
+From 63473e2288b66de9f7089e27f39f9f5fca03ebc0 Mon Sep 17 00:00:00 2001
+From: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+Date: Mon, 29 Aug 2022 11:54:58 -0400
+Subject: [PATCH 2/3] Add 2.5Gbps Support
+
+This patch add 2.5 Gbps Support for the link speed.
+
+Signed-off-by: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+---
+ include/net/ethernet.h                        | 30 +++++++++++--------
+ include/net/ethernet_mgmt.h                   |  1 +
+ .../net/sockets/echo_server/src/echo-server.c |  6 ++--
+ subsys/net/ip/net_shell.c                     |  1 +
+ subsys/net/l2/ethernet/ethernet_mgmt.c        |  7 +++++
+ 5 files changed, 30 insertions(+), 15 deletions(-)
+
+diff --git a/include/net/ethernet.h b/include/net/ethernet.h
+index c9fa29c145..be391197d3 100644
+--- a/include/net/ethernet.h
++++ b/include/net/ethernet.h
+@@ -128,42 +128,45 @@ enum ethernet_hw_caps {
+ 	/** 1 Gbits link supported */
+ 	ETHERNET_LINK_1000BASE_T	= BIT(6),
+ 
++	/** 2.5 Gbits link supported */
++        ETHERNET_LINK_2500BASE_T        = BIT(7),
++
+ 	/** Changing duplex (half/full) supported */
+-	ETHERNET_DUPLEX_SET		= BIT(7),
++	ETHERNET_DUPLEX_SET		= BIT(8),
+ 
+ 	/** IEEE 802.1AS (gPTP) clock supported */
+-	ETHERNET_PTP			= BIT(8),
++	ETHERNET_PTP			= BIT(9),
+ 
+ 	/** IEEE 802.1Qav (credit-based shaping) supported */
+-	ETHERNET_QAV			= BIT(9),
++	ETHERNET_QAV			= BIT(10),
+ 
+ 	/** Promiscuous mode supported */
+-	ETHERNET_PROMISC_MODE		= BIT(10),
++	ETHERNET_PROMISC_MODE		= BIT(11),
+ 
+ 	/** Priority queues available */
+-	ETHERNET_PRIORITY_QUEUES	= BIT(11),
++	ETHERNET_PRIORITY_QUEUES	= BIT(12),
+ 
+ 	/** MAC address filtering supported */
+-	ETHERNET_HW_FILTERING		= BIT(12),
++	ETHERNET_HW_FILTERING		= BIT(13),
+ 
+ 	/** Link Layer Discovery Protocol supported */
+-	ETHERNET_LLDP			= BIT(13),
++	ETHERNET_LLDP			= BIT(14),
+ 
+ 	/** VLAN Tag stripping */
+-	ETHERNET_HW_VLAN_TAG_STRIP	= BIT(14),
++	ETHERNET_HW_VLAN_TAG_STRIP	= BIT(15),
+ 
+ 	/** DSA switch */
+-	ETHERNET_DSA_SLAVE_PORT	= BIT(15),
+-	ETHERNET_DSA_MASTER_PORT	= BIT(16),
++	ETHERNET_DSA_SLAVE_PORT		= BIT(16),
++	ETHERNET_DSA_MASTER_PORT	= BIT(17),
+ 
+ 	/** IEEE 802.1Qbv (scheduled traffic) supported */
+-	ETHERNET_QBV			= BIT(17),
++	ETHERNET_QBV			= BIT(18),
+ 
+ 	/** IEEE 802.1Qbu (frame preemption) supported */
+-	ETHERNET_QBU			= BIT(18),
++	ETHERNET_QBU			= BIT(19),
+ 
+ 	/** TXTIME supported */
+-	ETHERNET_TXTIME			= BIT(19),
++	ETHERNET_TXTIME			= BIT(20),
+ };
+ 
+ /** @cond INTERNAL_HIDDEN */
+@@ -375,6 +378,7 @@ struct ethernet_config {
+ 			bool link_10bt;
+ 			bool link_100bt;
+ 			bool link_1000bt;
++			bool link_2500bt;
+ 		} l;
+ 
+ 		struct net_eth_addr mac_address;
+diff --git a/include/net/ethernet_mgmt.h b/include/net/ethernet_mgmt.h
+index ccab94de8c..c6910c13d2 100644
+--- a/include/net/ethernet_mgmt.h
++++ b/include/net/ethernet_mgmt.h
+@@ -144,6 +144,7 @@ struct ethernet_req_params {
+ 			bool link_10bt;
+ 			bool link_100bt;
+ 			bool link_1000bt;
++			bool link_2500bt;
+ 		} l;
+ 
+ 		struct net_eth_addr mac_address;
+diff --git a/samples/net/sockets/echo_server/src/echo-server.c b/samples/net/sockets/echo_server/src/echo-server.c
+index e8e78be01c..bce0dc4011 100644
+--- a/samples/net/sockets/echo_server/src/echo-server.c
++++ b/samples/net/sockets/echo_server/src/echo-server.c
+@@ -718,8 +718,10 @@ static int cmd_link_speed(const struct shell *shell, size_t argc, char **argv)
+ 		shell_error(shell, "Interface not found");
+ 		return -ENODEV;
+ 	}
+-
+-	if (atoi(argv[2]) == 1000) {
++	
++	if (atoi(argv[2]) == 2500) {
++		params.l.link_2500bt = true;
++	} else if (atoi(argv[2]) == 1000) {
+ 		params.l.link_1000bt = true;
+ 	} else if (atoi(argv[2]) == 100) {
+ 		params.l.link_100bt = true;
+diff --git a/subsys/net/ip/net_shell.c b/subsys/net/ip/net_shell.c
+index 12cc363689..8c9dd6a7cf 100644
+--- a/subsys/net/ip/net_shell.c
++++ b/subsys/net/ip/net_shell.c
+@@ -263,6 +263,7 @@ static struct ethernet_capabilities eth_hw_caps[] = {
+ 	EC(ETHERNET_LINK_10BASE_T,        "10 Mbits"),
+ 	EC(ETHERNET_LINK_100BASE_T,       "100 Mbits"),
+ 	EC(ETHERNET_LINK_1000BASE_T,      "1 Gbits"),
++	EC(ETHERNET_LINK_2500BASE_T,      "2.5 Gbits"),
+ 	EC(ETHERNET_DUPLEX_SET,           "Half/full duplex"),
+ 	EC(ETHERNET_PTP,                  "IEEE 802.1AS gPTP clock"),
+ 	EC(ETHERNET_QAV,                  "IEEE 802.1Qav (credit shaping)"),
+diff --git a/subsys/net/l2/ethernet/ethernet_mgmt.c b/subsys/net/l2/ethernet/ethernet_mgmt.c
+index 3e6aac0309..b8f2d7901a 100644
+--- a/subsys/net/l2/ethernet/ethernet_mgmt.c
++++ b/subsys/net/l2/ethernet/ethernet_mgmt.c
+@@ -79,6 +79,13 @@ static int ethernet_set_config(uint32_t mgmt_request,
+ 			}
+ 
+ 			config.l.link_1000bt = true;
++		} else if (params->l.link_2500bt) {
++			if (!is_hw_caps_supported(dev,
++						  ETHERNET_LINK_2500BASE_T)) {
++				return -ENOTSUP;
++			}
++
++			config.l.link_2500bt = true;
+ 		} else {
+ 			return -EINVAL;
+ 		}
+-- 
+2.25.1
+

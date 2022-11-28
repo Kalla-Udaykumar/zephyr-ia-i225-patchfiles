@@ -1,0 +1,84 @@
+From eb692dbd5c8d3eb42d06c50b825fe6f867cbbd16 Mon Sep 17 00:00:00 2001
+From: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+Date: Tue, 8 Nov 2022 19:49:37 -0500
+Subject: [PATCH] ehl_config
+
+Signed-off-by: Muhammad Husaini Zulkifli <muhammad.husaini.zulkifli@intel.com>
+---
+ .../ethernet/echo_server/overlay-ehl.conf     | 21 +++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/samples/intel/ethernet/echo_server/overlay-ehl.conf b/samples/intel/ethernet/echo_server/overlay-ehl.conf
+index c37756d..1a8bb7b 100644
+--- a/samples/intel/ethernet/echo_server/overlay-ehl.conf
++++ b/samples/intel/ethernet/echo_server/overlay-ehl.conf
+@@ -31,6 +31,8 @@ CONFIG_ETH_DWC_EQOS_2=n
+ CONFIG_ETH_DWC_EQOS_2_NAME="ETH_DWC_EQOS_2"
+ CONFIG_ETH_DWC_EQOS_2_AUTONEG=y
+ 
++CONFIG_ETH_IGC=y
++
+ #
+ # Timer Drivers
+ #
+@@ -66,7 +68,7 @@ CONFIG_NET_PKT_TIMESTAMP=y
+ CONFIG_NET_PKT_TIMESTAMP_THREAD=y
+ CONFIG_NET_CONTEXT_PRIORITY=y
+ CONFIG_NET_PROMISCUOUS_MODE=y
+-CONFIG_NET_SHELL=n
++CONFIG_NET_SHELL=y
+ 
+ #
+ # Stack usage
+@@ -76,6 +78,8 @@ CONFIG_NET_STATISTICS=y
+ CONFIG_NET_STATISTICS_USER_API=y
+ CONFIG_NET_STATISTICS_ETHERNET_VENDOR=y
+ 
++CONFIG_NET_L2_ETHERNET_LOG_LEVEL_DBG=y
++
+ #
+ # Network Libraries
+ #
+@@ -90,17 +94,19 @@ CONFIG_TEST_RANDOM_GENERATOR=y
+ #
+ # Other Kernel Object Options
+ #
+-CONFIG_HEAP_MEM_POOL_SIZE=16384
++# 16384
++CONFIG_HEAP_MEM_POOL_SIZE=131070
+ CONFIG_SYSTEM_WORKQUEUE_PRIORITY=-11
+ 
+ # x86 settings
+ CONFIG_PCIE=y
+-CONFIG_PCIE_MSI_MULTI_VECTOR=n
+-CONFIG_PCIE_SHELL=n
++CONFIG_PCIE_MSI_MULTI_VECTOR=y
++CONFIG_PCIE_MSI_X=y
++CONFIG_PCIE_SHELL=y
+ 
+ CONFIG_LOG=y
+ CONFIG_ETHERNET_LOG_LEVEL_DBG=y
+-CONFIG_LOG_BACKEND_UART=y
++CONFIG_LOG_BACKEND_UART=n
+ 
+ CONFIG_THREAD_NAME=y
+ 
+@@ -110,7 +116,7 @@ CONFIG_LOG_STRDUP_POOL_PROFILING=y
+ 
+ CONFIG_ASSERT=y
+ CONFIG_SMP=n
+-CONFIG_SHELL=n
++CONFIG_SHELL=y
+ CONFIG_SHELL_STACK_SIZE=8192
+ 
+ CONFIG_NET_DEBUG_NET_PKT_ALLOC=y
+@@ -120,3 +126,6 @@ CONFIG_NET_PKT_TXTIME_STATS=y
+ CONFIG_NET_PKT_TXTIME_STATS_DETAIL=y
+ CONFIG_NET_PKT_RXTIME_STATS=y
+ CONFIG_NET_PKT_RXTIME_STATS_DETAIL=y
++
++CONFIG_DEVMEM_SHELL=y
++CONFIG_MP_NUM_CPUS=4
+-- 
+2.25.1
+
